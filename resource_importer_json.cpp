@@ -35,10 +35,10 @@ String ResourceImporterJSON::get_preset_name(int p_idx) const {
 	return String();
 }
 
-void ResourceImporterJSON::get_import_options(List<ImportOption> *r_options, int p_preset) const {
+void ResourceImporterJSON::get_import_options(const String &p_path, List<ImportOption> *r_options, int p_preset) const {
 }
 
-bool ResourceImporterJSON::get_option_visibility(const String &p_option, const Map<StringName, Variant> &p_options) const {
+bool ResourceImporterJSON::get_option_visibility(const String &p_path, const String &p_option, const HashMap<StringName, Variant> &p_options) const {
 	return true;
 }
 
@@ -66,19 +66,18 @@ int ResourceImporterJSON::get_preset_count() const {
 	return 0;
 }
 
-Error ResourceImporterJSON::import(const String &p_source_file, const String &p_save_path, const Map<StringName, Variant> &p_options, List<String> *r_platform_variants, List<String> *r_gen_files, Variant *r_metadata) {
+Error ResourceImporterJSON::import(const String &p_source_file, const String &p_save_path, const HashMap<StringName, Variant> &p_options, List<String> *r_platform_variants, List<String> *r_gen_files, Variant *r_metadata) {
 
-	FileAccess *file = FileAccess::create(FileAccess::ACCESS_RESOURCES);
+	Ref<FileAccess> file = FileAccess::create(FileAccess::ACCESS_RESOURCES);
 	Error err;
 	String json_string = file->get_file_as_string(p_source_file, &err);
 	ERR_FAIL_COND_V_MSG(err != OK, FAILED, "Can not open json file.");
 	Ref<JSONData> json_data;
-	json_data.instance();
+	json_data.instantiate();
 	String error_string;
-	int error_line;
-	Variant data;
-	err = JSON::parse(json_string, data, error_string, error_line);
-	ERR_FAIL_COND_V_MSG(err != OK, FAILED, String("Can not parse JSON ") + error_string + " on line " + rtos(error_line) + ".");
-	json_data->set_data(data);
+	Ref<JSON> json = memnew(JSON);
+	err = json->parse(json_string);
+	ERR_FAIL_COND_V_MSG(err != OK, FAILED, String("Can not parse JSON ") + json->get_error_message() + " on line " + rtos(json->get_error_line()) + ".");
+	json_data->set_data(json->get_data());
 	return ResourceSaver::save(p_save_path + ".res", json_data);
 }

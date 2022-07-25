@@ -31,7 +31,9 @@
 #ifndef RESOURCE_IMPORTER_JSON_REGISTER_TYPES
 #define RESOURCE_IMPORTER_JSON_REGISTER_TYPES
 
-void register_json_types();
-void unregister_json_types();
+#include "modules/register_module_types.h"
+
+void initialize_json_module(ModuleInitializationLevel p_level);
+void uninitialize_json_module(ModuleInitializationLevel p_level);
 
 #endif

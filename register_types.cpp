@@ -30,14 +30,28 @@
 
 #include "register_types.h"
 #include "core/io/resource_importer.h"
+#include "editor/editor_node.h"
 #include "resource_importer_json.h"
 
-void register_json_types() {
-	ClassDB::register_class<JSONData>();
+static void _editor_init() {
 	Ref<ResourceImporterJSON> json_data;
-	json_data.instance();
+	json_data.instantiate();
 	ResourceFormatImporter::get_singleton()->add_importer(json_data);
 }
 
-void unregister_json_types() {
+void initialize_json_module(ModuleInitializationLevel p_level) {	
+	ClassDB::register_class<JSONData>();
+#ifdef TOOLS_ENABLED
+	if (p_level == MODULE_INITIALIZATION_LEVEL_EDITOR) {
+		// Editor-specific API.
+		ClassDB::APIType prev_api = ClassDB::get_current_api();
+		ClassDB::set_current_api(ClassDB::API_EDITOR);
+		ClassDB::register_class<ResourceFormatImporter>();
+		ClassDB::set_current_api(prev_api);
+		EditorNode::add_init_callback(_editor_init);
+	}
+#endif // TOOLS_ENABLED
+}
+
+void uninitialize_json_module(ModuleInitializationLevel p_level) {
 }
