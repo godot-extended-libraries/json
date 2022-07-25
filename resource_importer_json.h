@@ -46,7 +46,7 @@ protected:
 		ClassDB::bind_method(D_METHOD("set_json", "json"), &JSONData::set_json);
 		ClassDB::bind_method(D_METHOD("get_json"), &JSONData::get_json);
 
-		ADD_PROPERTY(PropertyInfo(Variant::DICTIONARY, "dictionary"), "set_data", "get_data");
+		ADD_PROPERTY(PropertyInfo(Variant::DICTIONARY, "data"), "set_data", "get_data");
 	}
 
 public:

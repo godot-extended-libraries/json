@@ -362,3 +362,5 @@ compile_commands.json
 
 # Cppcheck
 *.cppcheck
+
+demo/.godot/
